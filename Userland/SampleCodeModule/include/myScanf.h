@@ -1,0 +1,1 @@
+void myScanf(char* cadena,...);
