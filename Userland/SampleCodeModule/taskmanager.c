@@ -15,13 +15,13 @@ int run(char *name, void *entry_point, void ** argv, int* pid, int process_type,
   return id;
 }
 
-void nice(int pid, int new_priority){
+void nice(process_id_t pid, int new_priority){
   SysCallDispatcher(15, (uint64_t) pid, (uint64_t) new_priority, 0, 0, 0, 0);
 }
 
 void kill(process_id_t pid)
 {
-  SysCallDispatcher(13, pid, 0, 0, 0, 0, 0);
+  SysCallDispatcher(13, (uint64_t)pid, 0, 0, 0, 0, 0);
 }
 
 #define PS_STRING "%s    "

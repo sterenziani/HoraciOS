@@ -139,7 +139,7 @@ void invalid_argument(char* command, char* target)
 		myPrintf("%s is not a valid argument for command %s\n", target, command);
 }
 
-void argument_command_handler(char* command, char* target)
+void argument_command_handler(char* command, char* target, char* arg)
 {
 	if(strcmp(command, MALLOC) == 0)
 	{
@@ -174,6 +174,18 @@ void argument_command_handler(char* command, char* target)
 			invalid_argument(command, target);
 		return;
 	}
+	if(strcmp(command, NICE) == 0)
+	{
+		if(arg[0]!=0 && isNumber(target) && isNumber(arg))
+		{
+			unsigned int pid = myAtoi(target);
+			unsigned int priority = myAtoi(arg);
+			nice(pid, priority);
+		}
+		else
+			no_argument();
+		return;
+	}
 	invalid_command(command);
 }
 
@@ -181,6 +193,7 @@ void interprete(char* string)
 {
 	char command[BUFFER_SIZE] = {0};
 	char target[BUFFER_SIZE] = {0};
+	char arg[BUFFER_SIZE] = {0};
 	int j=0;
 	while(string[j] != ' ' && string[j] != 0)
 	{
@@ -211,13 +224,25 @@ void interprete(char* string)
 			if(string[j] != 0)
 			{
 				int k = 0;
-				while(string[j] != 0)
+				while(string[j] != 0 && string[j] != ' ')
 				{
 					target[k] = string[j];
 					j++;
 					k++;
 				}
-				argument_command_handler(command, target);
+				// Si hay algún segundo parametro, meterlo en arg
+				if(string[j] == ' ')
+				{
+					k=0;
+					j++;
+					while (string[j] != 0)
+					{
+						arg[k] = string[j];
+						j++;
+						k++;
+					}
+				}
+				argument_command_handler(command, target, arg);
 			}
 			else
 				no_argument();
