@@ -5,5 +5,6 @@ typedef unsigned int process_id_t;
 int run(char *name, void *entry_point, void ** argv, int* pid, int process_type, int priority);
 void kill(process_id_t pid);
 void list_all_processes();
+void nice(int pid, int new_priority);
 
 #endif

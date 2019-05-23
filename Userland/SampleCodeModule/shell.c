@@ -23,6 +23,7 @@
 #define PS "ps"
 #define SCHEDULER_TEST "scheduler_test"
 #define DUMMY "dummy"
+#define NICE "nice"
 
 mailbox_t mailbox;
 mutex_t mutex;

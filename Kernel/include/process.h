@@ -5,6 +5,8 @@
 
 typedef unsigned int priority_t;
 
+#define MAX_PRIORITY 9
+
 typedef unsigned int process_id_t;
 
 typedef struct process_stack {
@@ -43,6 +45,7 @@ int process_is_blocked(process_id_t pid);
 process_state_t get_process_state(process_id_t pid);
 int get_process_id(ProcessContextBlock process);
 void get_ready_processes(binary_info_t *binary_info, int max, int *returned);
+int change_priority(process_id_t pid, int priority);
 
 //Will become kill
 int mark_process_as_finished(process_id_t pid);

@@ -14,6 +14,7 @@
 #define PROCESS_INIT_STACK_SIZE 40960
 #define VALID_PROCESS_ID(__pid) (__pid < MAX_PROCESS_COUNT)
 #define INIT_PRIORITY 0
+#define VALID_PRIORITY(__priority) (__priority >= 0 && __priority <= MAX_PRIORITY)
 
 static process_context_block_t ready_processes[MAX_PROCESS_COUNT];
 static int process_pointer = -1;
@@ -76,7 +77,7 @@ int get_process_id(ProcessContextBlock process){
 }
 
 int create_process(void **argv, void *entry_point, int *process_id, process_type_t type, char *name, int priority){
-	if (name == NULL){
+	if (name == NULL || !VALID_PRIORITY(priority)){
 		if (process_id != NULL){
 			*process_id = -1;
 		}
@@ -194,6 +195,14 @@ void *get_rsp(ProcessContextBlock process){
 
 void set_rsp(ProcessContextBlock process, void *rsp){
 	process->stack.current = rsp;
+}
+
+int change_priority(process_id_t pid, int priority){
+	if (!VALID_PROCESS_ID(pid) || !VALID_PRIORITY(priority)){
+		return 0;
+	}
+	ready_processes[pid].priority = priority;
+	return 1;
 }
 
 void get_ready_processes(binary_info_t *binary_info, int max, int *returned){

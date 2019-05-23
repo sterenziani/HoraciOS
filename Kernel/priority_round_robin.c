@@ -39,8 +39,7 @@ int amount_in_round_robin(){
 
 
 void queue_round_robin(void* element, int priority){
-	if (amount_in_round_robin() >= MAX_NODES)
-	{
+	if (amount_in_round_robin() >= MAX_NODES){
 		return;
 	}
 	(round_robin.nodes)++;
@@ -56,6 +55,9 @@ void queue_round_robin(void* element, int priority){
 	}
 	while(round_robin.buffer.node_buffer[round_robin.buffer.ptr].element != NULL){
 		round_robin.buffer.ptr++;
+		if (round_robin.buffer.ptr >= MAX_NODES){
+			round_robin.buffer.ptr = 0;
+		}
 	}
 	round_robin.buffer.node_buffer[round_robin.buffer.ptr].element = element;
 	round_robin.buffer.node_buffer[round_robin.buffer.ptr].quantum = calculate_quantum(priority);
@@ -66,7 +68,9 @@ void queue_round_robin(void* element, int priority){
 void dequeue_round_robin(){
 	if (round_robin.current == NULL){
 		return;
-	} else if(round_robin.current == round_robin.last){
+	}
+	round_robin.current->element = NULL;
+	if(round_robin.current == round_robin.last){
 		round_robin.current = NULL;
 		round_robin.last = NULL;
 		(round_robin.nodes)--;
