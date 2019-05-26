@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <binary_info.h>
 
-int run(char *name, void *entry_point, void ** argv, int* pid, int process_type, int priority){
+int run(char *name, void *entry_point, void ** argv, int* pid, int process_type, int priority, mailbox_t input, mailbox_t output){
   int id;
   SysCallDispatcher(12, (uint64_t) entry_point, (uint64_t) argv, (uint64_t) &id, (uint64_t) name, process_type, priority);
   if (pid != NULL){

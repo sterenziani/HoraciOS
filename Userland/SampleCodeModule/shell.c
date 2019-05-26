@@ -24,9 +24,10 @@
 #define SCHEDULER_TEST "scheduler_test"
 #define DUMMY "dummy"
 #define NICE "nice"
+#define TELL_POEM "poem"
+#define FILTER_VOWELS "filter_vowels"
 
-mailbox_t mailbox;
-mutex_t mutex;
+int pipe_counter;
 
 void invalid_command(char * s) {
 	myPrintf("%s: command not found or lacking arguments\n",s);
@@ -52,7 +53,7 @@ void help() {
 	myPrintf(" *  %s - Lists all processes running currently\n\n", PS);
 	myPrintf(" *  %s - Tests scheduler by running three processes that only print a letter repeatedly\n\n", SCHEDULER_TEST);
 	myPrintf(" *  %s - Sleeps for 10 seconds. Perfect for ps testing!\n\n", DUMMY);
-
+	myPrintf(" *  %s [pid] [int] - Changes [pid]'s priority to [int]\n\n", NICE);
 	myPutchar('\n');
 }
 
@@ -62,16 +63,16 @@ void zeroDivision() {
 	return;
 }
 
-void standard_command_handler(char* s, int background_flag)
+void standard_command_handler(char* s, int background_flag, mailbox_t input, mailbox_t output)
 {
 	if(strcmp(s, HELP_COMMAND) == 0)
 	{
-		run("help", help, NULL, NULL, background_flag, 0);
+		run("help", help, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, CLOCK_COMMAND) == 0)
 	{
-		run("watch", watch, NULL, NULL, background_flag, 0);
+		run("watch", watch, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, DIGITAL_CLOCK_COMMAND) == 0)
@@ -79,22 +80,22 @@ void standard_command_handler(char* s, int background_flag)
 		if(background_flag == 1)
 			myPrintf("This process requires user input and can not run on background\n");
 		else
-			run("digitalclock", digitalClock, NULL, NULL, background_flag, 0);
+			run("digitalclock", digitalClock, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, MEM_CHECK) == 0)
 	{
-		run("printMemoryBitmap", printMemoryBitmap, NULL, NULL, background_flag, 0);
+		run("printMemoryBitmap", printMemoryBitmap, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, MAILBOX_TEST) == 0)
 	{
-		run("mailbox_test", mailbox_test, NULL, NULL, background_flag, 0);
+		run("mailbox_test", mailbox_test, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, MUTEX_TEST) == 0)
 	{
-		run("mutex_test", mutex_test, NULL, NULL, background_flag, 0);
+		run("mutex_test", mutex_test, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, PRODCONS_SEM) == 0)
@@ -107,31 +108,106 @@ void standard_command_handler(char* s, int background_flag)
 	}
 	if(strcmp(s, PS) == 0)
 	{
-		run("ps", list_all_processes, NULL, NULL, background_flag, 0);
+		run("ps", list_all_processes, NULL, NULL, background_flag, 0, input, output);
+		myPrintf("hola");
 		return;
 	}
 	if(strcmp(s, SCHEDULER_TEST) == 0)
 	{
-		run("scheduler_test", scheduler_test, NULL, NULL, background_flag, 0);
+		run("scheduler_test", scheduler_test, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	if(strcmp(s, DUMMY) == 0)
 	{
-		run("dummy", sleep_for_10_secs, NULL, NULL, background_flag, 0);
+		run("dummy", sleep_for_10_secs, NULL, NULL, background_flag, 0, input, output);
+		return;
+	}
+	if(strcmp(s, TELL_POEM) == 0)
+	{
+		run("poem", tell_poem_test, NULL, NULL, background_flag, 0, input, output);
+		return;
+	}
+	if(strcmp(s, FILTER_VOWELS) == 0)
+	{
+		run("filter_vowels", vowel_reader_test, NULL, NULL, background_flag, 0, input, output);
 		return;
 	}
 	invalid_command(s);
 	return;
 }
 
+int is_output_command(char* command)
+{
+	if(strcmp(command, CLOCK_COMMAND) == 0)
+		return 1;
+	if(strcmp(command, HELP_COMMAND) == 0)
+		return 1;
+	if(strcmp(command, MEM_CHECK) == 0)
+		return 1;
+	if(strcmp(command, MUTEX_TEST) == 0)
+		return 1;
+	if(strcmp(command, MAILBOX_TEST) == 0)
+		return 1;
+	if(strcmp(command, PS) == 0)
+		return 1;
+	if(strcmp(command, SCHEDULER_TEST) == 0)
+		return 1;
+	if(strcmp(command, DUMMY) == 0)
+		return 1;
+	if(strcmp(command, TELL_POEM) == 0)
+		return 1;
+	return 0;
+}
+
+int is_input_command(char* command)
+{
+	if(strcmp(command, PRODCONS_SEM) == 0)
+		return 1;
+	if(strcmp(command, DIGITAL_CLOCK_COMMAND) == 0)
+		return 1;
+	if(strcmp(command, FILTER_VOWELS) == 0)
+		return 1;
+	return 0;
+}
+
 void pipe_command_handler(char* app, char* target)
 {
-	myPrintf("Pipes have not been implemented yet! Come back when TP3 is finished!\n");
+	if(!is_output_command(app))
+	{
+		myPrintf("Left process is not allowed for use with pipes. Please replace it with a command that only outputs to the screen in shell");
+		return;
+	}
+	if(!is_input_command(target))
+	{
+		myPrintf("Left process is not allowed for use with pipes. Please replace it with a command that only outputs to the screen in shell");
+		return;
+	}
+	int number_length = 20;
+	char pipe_number[number_length];
+	char pipe_name[number_length+4];
+	toString(pipe_counter, pipe_number);
+	pipe_name[0] = 'p';
+	pipe_name[1] = 'i';
+	pipe_name[2] = 'p';
+	pipe_name[3] = 'e';
+	for (int i = 0; i < number_length; i++)
+		pipe_name[4+i] = pipe_number[i];
+	mailbox_t mailbox = create_mailbox(pipe_name);
+
+	myPrintf("Input: ");
+	myPrintHex((uint64_t)NULL);
+	myPrintf(" / Output: ");
+	myPrintHex((uint64_t)mailbox);
+	myPrintf(" in Userland\n");
+	standard_command_handler(app, 1, NULL, mailbox);
+	standard_command_handler(target, 0, mailbox, NULL);
+	destroy_mailbox(mailbox);
+	return;
 }
 
 void background_command_handler(char* s)
 {
-	standard_command_handler(s, 1);
+	standard_command_handler(s, 1, NULL, NULL);
 }
 
 void invalid_argument(char* command, char* target)
@@ -249,12 +325,11 @@ void interprete(char* string)
 		}
 	}
 	else
-		standard_command_handler(command, 0);
+		standard_command_handler(command, 0, NULL, NULL);
 }
 
 void shell() {
-	mailbox = NULL;
-	mutex = NULL;
+	pipe_counter = 0;
 	setCursor(0, screen_height()-char_height());
 	char c;
 	int i=0;

@@ -86,7 +86,7 @@ void callChef() {
 		return;
 	}
   int pid = 0;
-  run("chef", &chef, args, &pid, 1, 0);
+  run("chef", &chef, args, &pid, 1, 0, NULL, NULL);
 	chefs[chefsQty++] = pid;
 	mutex_unlock(mutexA);
 }
@@ -141,7 +141,7 @@ void callWaiter() {
 		return;
 	}
   int pid;
-  run("waiter", &waiter, args, &pid, 1, 0);
+  run("waiter", &waiter, args, &pid, 1, 0, NULL, NULL);
 	waiters[waitersQty++] = pid;
 	mutex_unlock(mutexA);
 }

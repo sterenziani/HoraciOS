@@ -4,9 +4,30 @@
 #include <ipc.h>
 #include <time.h>
 #include <taskmanager.h>
+#include <myScanf.h>
 
 #define SLEEP_TIME 4
 #define SCREAMS 5000
+
+void vowel_reader_test()
+{
+  int c;
+  while((c=myGetChar()) != '\n')
+  {
+    if(c == 'a' || c == 'A' || c == 'e' || c == 'E' || c == 'i' || c == 'I' || c == 'o' || c == 'O' || c == 'u' || c == 'U' || c == ' ')
+      myPutchar(c);
+    else if(c == 0)
+      ;
+    else
+      myPutchar(' ');
+  }
+  myPutchar('\n');
+}
+
+void tell_poem_test()
+{
+  myPrintf("There was an old man from Peru who dreamed he was eating his shoe. When he woke in a fright in the dark of the night he found it was perfectly true\n");
+}
 
 void increment_variable_with_mutex(void** args)
 {
@@ -19,12 +40,6 @@ void increment_variable_with_mutex(void** args)
   {
     mutex_lock(var_mutex);
     *p += 1;
-/*
-    if(sync_mutex == NULL)
-      myPrintf("B increased variable to %d\n", *p);
-    else
-      myPrintf("A increased variable to %d\n", *p);
-*/
     mutex_unlock(var_mutex);
   }
   if(sync_mutex != NULL)
@@ -50,7 +65,7 @@ void mutex_test()
   int pid;
 
   // Let's go!
-  run("increment variable with mutex", increment_variable_with_mutex, argsA, &pid, 1, 0);
+  run("increment variable with mutex", increment_variable_with_mutex, argsA, &pid, 1, 0, NULL, NULL);
   increment_variable_with_mutex(argsB);
   myPrintf("Process B finished!\n");
   mutex_lock(mutex2);
@@ -91,7 +106,7 @@ void mailbox_test()
   myPrintf("We're awaiting messages coming from aliens.\nWe expect our reader process to block itself until there is something to read\nLet's see if we can establish communication...\n\n");
   int pid;
   void* args[1] = {mailbox};
-  run("writer", writer, args, &pid, 1, 0);
+  run("writer", writer, args, &pid, 1, 0, NULL, NULL);
 
   char cadena[500];
   read_message(mailbox, 17, cadena);
@@ -150,9 +165,9 @@ void scheduler_test()
   mutex_t mutex1 = mutex_create("sch_mutex1");
   mutex_t mutex2 = mutex_create("sch_mutex2");
   mutex_t mutex3 = mutex_create("sch_mutex3");
-  run("screamA", &screamA, NULL, NULL, 1, 0);
-  run("screamB", &screamB, NULL, NULL, 1, 0);
-  run("screamC", &screamC, NULL, NULL, 1, 0);
+  run("screamA", &screamA, NULL, NULL, 1, 0, NULL, NULL);
+  run("screamB", &screamB, NULL, NULL, 1, 0, NULL, NULL);
+  run("screamC", &screamC, NULL, NULL, 1, 0, NULL, NULL);
   sleep(5);
   mutex_lock(mutex1);
   mutex_lock(mutex2);

@@ -2,6 +2,7 @@
 #define _PROCESS_H
 
 #include <binary_info.h>
+#include <mailbox.h>
 
 typedef unsigned int priority_t;
 
@@ -31,6 +32,8 @@ typedef struct process_context_block {
 	//
 	process_type_t type;
 	struct process_context_block * parent;
+	mailbox_t input;
+	mailbox_t output;
 } process_context_block_t;
 
 typedef process_context_block_t *ProcessContextBlock;
@@ -46,9 +49,7 @@ process_state_t get_process_state(process_id_t pid);
 int get_process_id(ProcessContextBlock process);
 void get_ready_processes(binary_info_t *binary_info, int max, int *returned);
 int change_priority(process_id_t pid, int priority);
-
-//Will become kill
 int mark_process_as_finished(process_id_t pid);
-int process_has_finished(process_id_t pid); 
+int process_has_finished(process_id_t pid);
 
 #endif

@@ -1,5 +1,7 @@
+#ifndef _MAILBOX_H
+#define _MAILBOX_H
+
 #include <lib.h>
-#include <process.h>
 
 #define MAILBOX_BUFFER_SIZE 4000
 #define MAX_MAILBOXES 10
@@ -10,7 +12,7 @@ typedef struct mailbox{
   int write_index;
   int empty_bytes;
   char buffer[MAILBOX_BUFFER_SIZE];
-  process_id_t lockedQueue[PROCESS_QUEUE_SIZE];
+  unsigned int lockedQueue[PROCESS_QUEUE_SIZE];
   int queue_index;
 }mailbox_struct_t;
 
@@ -29,3 +31,5 @@ void destroy_mailbox(mailbox_t mailbox);
 int write_message_by_name(char* name, char* msg);
 int read_message_by_name(char* name, int bytes, char* dest);
 void destroy_mailbox_by_name(char* name);
+
+#endif

@@ -128,7 +128,9 @@ int create_process(void **argv, void *entry_point, int *process_id, process_type
 	if (type == FOREGROUND && ppid != -1 && scheduled_processes() > 1){
 		mark_process_as_blocked(ppid);
 	}
-  	return 1;
+	ready_processes[reserved_process_pointer].input = NULL;
+	ready_processes[reserved_process_pointer].output = NULL;
+  return 1;
 }
 
 static int change_process_state(process_id_t pid, process_state_t state){
