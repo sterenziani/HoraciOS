@@ -140,6 +140,9 @@ void SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint6
 		case GET_ALL_PROCESSES:
 								get_ready_processes((binary_info_t *) p1, (int) p2, (int*) p3);
 								break;
+		case BE_NICE:
+								change_priority((process_id_t) p1, (int) p2);
+								break;
 		case MALLOC:
 								malloc_handler(p1, (void**)p2);
 								break;

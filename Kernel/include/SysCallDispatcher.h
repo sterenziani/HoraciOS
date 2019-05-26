@@ -13,6 +13,7 @@
 #define CREATE_PROCESS 12
 #define KILL_PROCESS 13
 #define GET_ALL_PROCESSES 14
+#define BE_NICE 15
 
 #define PRINT_BITMAP 87
 #define SEM_CREATE 88
