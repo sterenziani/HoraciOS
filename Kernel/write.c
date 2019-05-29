@@ -1,5 +1,7 @@
 #include <naiveConsole.h>
 #include <font.h>
+#include <process.h>
+#include <scheduler.h>
 #define BIG_FONT_SIZE 15
 
 enum FD1{STDOUT=0, STDERR, NEWLINE};
@@ -12,15 +14,19 @@ void write_handler(uint64_t fd, char * buffer, int strlen)
 	for (i = 0; i < strlen; ++i)
 		cadena[i] = buffer[i];
 	cadena[i]= 0;
-	switch(fd)
-	{
-		case STDOUT:			print(cadena);
-											break;
-		case STDERR:  		printFormat(cadena, RED_COLOR, BACKGROUND_COLOR);
-											break;
-		case NEWLINE:			newLine();
-											break;
-	}
+	mailbox_t output;
+	if ((output = get_output(get_current_pid())) == NULL){
+		switch(fd){
+			case STDOUT:	print(cadena);
+							break;
+			case STDERR:  	printFormat(cadena, RED_COLOR, BACKGROUND_COLOR);
+							break;
+			case NEWLINE:	newLine();
+							break;
+		}
+	} else {
+		write_message(output, cadena);
+	}	
 }
 
 void big_handler(uint64_t fd, char* buffer, int strlen)

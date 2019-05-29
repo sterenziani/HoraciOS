@@ -76,18 +76,7 @@ int get_process_id(ProcessContextBlock process){
 	return process->id;
 }
 
-int create_process(void **argv, void *entry_point, header_t *header){
-	if (header->name == NULL || !VALID_PRIORITY(header->priority)){
-		return -1;
-	}
-	int ppid = get_current_pid();
-	if(process_pointer == -1){
-		process_pointer = 0;
-		process_count = 0;
-		ready_processes_containers();
-	}
-
-//// ENTER DANGER ZONE
+static int get_available_container(){
 	int reserved_process_pointer;
 	mutex_t process_mutex = mutex_create("process_mutex");
 	mutex_lock(process_mutex);
@@ -105,9 +94,24 @@ int create_process(void **argv, void *entry_point, header_t *header){
   	}while(ready_processes[process_pointer].state != FINISHED);
   	process_count++;
 	mutex_unlock(process_mutex);
+	return reserved_process_pointer;
+}
+
+int create_process(void **argv, void *entry_point, header_t *header){
+	if (header->name == NULL || !VALID_PRIORITY(header->priority)){
+		return -1;
+	}
+	int ppid = get_current_pid();
+	if(process_pointer == -1){
+		process_pointer = 0;
+		process_count = 0;
+		ready_processes_containers();
+	}
+
+//// ENTER DANGER ZONE
+	int reserved_process_pointer = get_available_container();
 //// EXIT DANGER ZONE
 	strncpy(ready_processes[reserved_process_pointer].name, header->name, PROCESS_NAME_LENGTH);
-
 	ready_processes[reserved_process_pointer].type = header->type;
 	if(ppid == -1){
 		ready_processes[reserved_process_pointer].parent = NULL;
@@ -116,12 +120,12 @@ int create_process(void **argv, void *entry_point, header_t *header){
 	}
 	ready_processes[reserved_process_pointer].stack.current = _initialize_stack(argv, count_process_args(argv), ready_processes[reserved_process_pointer].stack.stack_base, (void *) wrapper_process, entry_point, reserved_process_pointer);
 	ready_processes[reserved_process_pointer].priority = header->priority;
+	ready_processes[reserved_process_pointer].input = header->input;
+	ready_processes[reserved_process_pointer].output = header->output;
   	enqueue_process(&ready_processes[reserved_process_pointer]);
 	if (header->type == FOREGROUND && ppid != -1 && scheduled_processes() > 1){
 		mark_process_as_blocked(ppid);
 	}
-	ready_processes[reserved_process_pointer].input = header->input;
-	ready_processes[reserved_process_pointer].output = header->output;
   	return reserved_process_pointer;
 }
 
@@ -183,6 +187,14 @@ int process_is_blocked(process_id_t pid){
   return process_has_state(pid, BLOCKED);
 }
 
+mailbox_t get_input(process_id_t pid){
+	return ready_processes[pid].input;
+}
+
+mailbox_t get_output(process_id_t pid){
+	return ready_processes[pid].output;
+}
+
 void *get_rsp(ProcessContextBlock process){
 	return process->stack.current;
 }
@@ -195,7 +207,10 @@ int change_priority(process_id_t pid, int priority){
 	if (!VALID_PROCESS_ID(pid) || !VALID_PRIORITY(priority)){
 		return 0;
 	}
+	mutex_t process_mutex = mutex_create("change_priority_mutex");
+	mutex_lock(process_mutex);
 	ready_processes[pid].priority = priority;
+	mutex_unlock(process_mutex);
 	return 1;
 }
 

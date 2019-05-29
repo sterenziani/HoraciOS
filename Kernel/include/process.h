@@ -59,5 +59,7 @@ void get_ready_processes(binary_info_t *binary_info, int max, int *returned);
 int change_priority(process_id_t pid, int priority);
 int mark_process_as_finished(process_id_t pid);
 int process_has_finished(process_id_t pid);
+mailbox_t get_output(process_id_t pid);
+mailbox_t get_input(process_id_t pid);
 
 #endif
