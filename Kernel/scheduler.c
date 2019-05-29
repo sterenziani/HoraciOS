@@ -29,7 +29,8 @@ int scheduled_processes(){
 }
 
 static void *create_ghost_process(){
-	create_process(NULL, (void *) 0x400000, NULL, FOREGROUND, "shell", 1);
+	header_t header = {"shell", FOREGROUND, 1, NULL, NULL};
+	create_process(NULL, (void *) 0x400000, &header);
 	true_enqueue_process();
 	return get_rsp(peek_round_robin());
 }

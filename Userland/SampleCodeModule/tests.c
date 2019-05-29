@@ -165,9 +165,9 @@ void scheduler_test()
   mutex_t mutex1 = mutex_create("sch_mutex1");
   mutex_t mutex2 = mutex_create("sch_mutex2");
   mutex_t mutex3 = mutex_create("sch_mutex3");
-  run("screamA", &screamA, NULL, NULL, 1, 0, NULL, NULL);
+  run("screamA", &screamA, NULL, NULL, 1, 2, NULL, NULL);
   run("screamB", &screamB, NULL, NULL, 1, 0, NULL, NULL);
-  run("screamC", &screamC, NULL, NULL, 1, 0, NULL, NULL);
+  run("screamC", &screamC, NULL, NULL, 1, 5, NULL, NULL);
   sleep(5);
   mutex_lock(mutex1);
   mutex_lock(mutex2);

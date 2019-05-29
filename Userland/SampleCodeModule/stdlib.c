@@ -7,39 +7,39 @@
 
 void setCursor(int x, int y)
 {
-	SysCallDispatcher(6, (uint64_t)x, (uint64_t)y, 0, 0, 0, 0);
+	SysCallDispatcher(6, (uint64_t)x, (uint64_t)y, 0, 0, 0);
 }
 
 void beep()
 {
-	SysCallDispatcher(5, 0, 0, 0, 0, 0, 0);
+	SysCallDispatcher(5, 0, 0, 0, 0, 0);
 }
 
 int screen_width()
 {
 	int ret_value;
-	SysCallDispatcher(7,0,(uint64_t)&ret_value,0, 0, 0, 0);
+	SysCallDispatcher(7,0,(uint64_t)&ret_value,0, 0, 0);
 	return ret_value;
 }
 
 int screen_height()
 {
 	int ret_value;
-	SysCallDispatcher(7, 1, (uint64_t)&ret_value, 0, 0, 0, 0);
+	SysCallDispatcher(7, 1, (uint64_t)&ret_value, 0, 0, 0);
 	return ret_value;
 }
 
 int char_width()
 {
 	int ret_value;
-	SysCallDispatcher(7,2,(uint64_t)&ret_value,0, 0, 0, 0);
+	SysCallDispatcher(7,2,(uint64_t)&ret_value,0, 0, 0);
 	return ret_value;
 }
 
 int char_height()
 {
 	int ret_value;
-	SysCallDispatcher(7, 3, (uint64_t)&ret_value, 0, 0, 0, 0);
+	SysCallDispatcher(7, 3, (uint64_t)&ret_value, 0, 0, 0);
 	return ret_value;
 }
 
@@ -47,7 +47,7 @@ void clearScreen()
 {
 	for(int x=0;x<screen_width();x++) {
 		for(int y=0;y<screen_height();y++) {
-			SysCallDispatcher(1,x,y,BLACK_BACKGROUND, 0, 0, 0);
+			SysCallDispatcher(1,x,y,BLACK_BACKGROUND, 0, 0);
 		}
 	}
 }
@@ -55,30 +55,30 @@ void clearScreen()
 char myGetChar()
 {
   char c=0;
-    SysCallDispatcher(3,(uint64_t)&c,0,0,0,0, 0);
+    SysCallDispatcher(3, (uint64_t)&c, 0, 0, 0, 0);
   return c;
 }
 
 void myPutchar(int character)
 {
   if(character=='\n')
-    SysCallDispatcher(4,2,0,0,0,0, 0);
+    SysCallDispatcher(4, 2, 0, 0, 0, 0);
   else
-    SysCallDispatcher(4,0,(uint64_t)&character,1,0,0, 0);
+    SysCallDispatcher(4, 0, (uint64_t)&character, 1, 0, 0);
   return;
 }
 
 void myPutcharBig(int character,int color) {
 	if(character=='\n')
-    	SysCallDispatcher(8,0,0,0,0,0, 0);
+    	SysCallDispatcher(8, 0, 0, 0, 0, 0);
   	else
-   		SysCallDispatcher(8,color,(uint64_t)&character,1,0,0, 0);
+   		SysCallDispatcher(8, color, (uint64_t)&character, 1, 0, 0);
   	return;
 }
 
 void myPrintf(char * cadena,...)
 {
-	char resp[BUFFER_SIZE];
+	char resp[BUFFER_SIZE] = {0};
 	va_list ap;
 	va_start (ap,cadena);
 	int dim=strlen(cadena);
@@ -163,7 +163,7 @@ void myPrintfBig(int color,char * cadena,...) {
 
 void myPrintHex(uint64_t hex_number)
 {
-  SysCallDispatcher(11, hex_number, 0, 0, 0, 0, 0);
+  SysCallDispatcher(11, hex_number, 0, 0, 0, 0);
 }
 
 int strlen(char* str){
@@ -175,15 +175,15 @@ int strlen(char* str){
 }
 
 void toString(int num,char* resp){
-	int digit=0;
-	char aux;
 	if(num!=0){
+		int digit=0;
     // Arma el numero en el vector
 		while(num!=0){
 			resp[digit]=(num%10)+'0';
 			num=num/10;
 			digit++;
 		}
+		char aux;
     //invierte el orden de los numeros
 		for(int i=0;i<digit/2;i++){
 			aux=resp[i];

@@ -5,24 +5,24 @@
 void* malloc(uint64_t bytes)
 {
   void* address = 0;
-  SysCallDispatcher(9, bytes, (uint64_t) &address, 0, 0, 0, 0);
+  SysCallDispatcher(9, bytes, (uint64_t) &address, 0, 0, 0);
   return address;
 }
 
 void free(void* address)
 {
-  SysCallDispatcher(10, (uint64_t)address, 0, 0, 0, 0, 0);
+  SysCallDispatcher(10, (uint64_t)address, 0, 0, 0, 0);
 }
 
 void printMemoryBitmap()
 {
-  SysCallDispatcher(87, 0, 0, 0, 0, 0, 0);
+  SysCallDispatcher(87, 0, 0, 0, 0, 0);
 }
 
 void user_malloc(uint64_t bytes)
 {
   void* address = 0;
-  SysCallDispatcher(9, bytes, (uint64_t) &address, 0, 0, 0, 0);
+  SysCallDispatcher(9, bytes, (uint64_t) &address, 0, 0, 0);
   if(address == NULL)
     myPrintf("\nCould not allocate memory! The requested size of memory is either too big or invalid.\n");
   else

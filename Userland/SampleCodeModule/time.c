@@ -8,13 +8,13 @@ void sleep(int extra_secs)
 	int hour;
 	int minute;
 	int seconds;
-	SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0, 0);
+	SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0);
 	int current_time = hour*3600 + minute*60 + seconds;
 	// maximo current_time es 86399
 	int target_time = (current_time + extra_secs) % 86400;
 	while(current_time != target_time)
 	{
-			SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0, 0);
+			SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0);
 			current_time = hour*3600 + minute*60 + seconds;
 	}
 	return;
@@ -25,7 +25,7 @@ void watch() {
 	int minute;
 	int seconds;
 	int aux;
-	SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0, 0);
+	SysCallDispatcher(2, (uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0);
 	if(hour < 10) {
 		myPutchar('0');
 		myPutchar(hour+'0');
@@ -70,7 +70,7 @@ void digitalClock() {
 	myPrintf("Presione Enter para salir\n");
 		while((c=myGetChar()) != '\n') {
 			setCursor(20,240);
-			SysCallDispatcher(2,(uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0, 0);
+			SysCallDispatcher(2,(uint64_t)&hour,(uint64_t)&minute,(uint64_t)&seconds, 0, 0);
 			if(c == ' ')
 			{
 				if(color == 5) {

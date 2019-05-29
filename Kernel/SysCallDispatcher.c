@@ -103,7 +103,7 @@ static void info_handler(int p1, int* p2);
 													p4 = int pointer for return value
 */
 
-void SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64_t p4, uint64_t p5, uint64_t p6)
+int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64_t p4, uint64_t p5)
 {
 	switch (id)
 	{
@@ -132,8 +132,7 @@ void SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint6
 								big_handler(p1, (char*)p2, (int)p3);
 								break;
 		case CREATE_PROCESS:
-            					create_process((void **) p2, (void *) p1, (int *) p3, p5, (char *) p4, (int) p6);
-            					break;
+            					return create_process((void **) p2, (void *) p1, (header_t *) p3);
 		case KILL_PROCESS:
 								mark_process_as_finished((process_id_t) p1);
 								break;
@@ -192,6 +191,7 @@ void SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint6
 								*((int*)p4) = read_message((mailbox_t) p1, (int) p2, (char*) p3);
 								break;
 	}
+	return 0xC4F3;
 }
 
 static void info_handler(int p1, int* p2)

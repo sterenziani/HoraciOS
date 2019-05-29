@@ -11,7 +11,7 @@ int myScanf(char* format,...){
 	int cont=0;
 	int i=0,j=0;
 	char * buffer = {0};
-	SysCallDispatcher(3,0,(uint64_t)buffer,0,0,0, 0);
+	SysCallDispatcher(3, 0, (uint64_t)buffer, 0, 0, 0);
 	int* num;
  	char* str;
 

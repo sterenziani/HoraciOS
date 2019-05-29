@@ -11,7 +11,6 @@ GLOBAL inb
 GLOBAL beepon
 GLOBAL beepoff
 GLOBAL mutex_acquire
-GLOBAL _initialize_stack
 
 section .bss
 	RestoreSP: resq 1
@@ -115,58 +114,4 @@ mutex_acquire:
 
 	mov rsp, rbp
 	pop rbp
-	ret
-
-%macro pushaqNOrax 0
-    push rbx
-    push r9
-    push rsi
-    push rbp
-    push r8
-    push rdi
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-%endmacro
-
-%macro popaqNOrax 0
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
-%endmacro
-
-_initialize_stack:
-	pushaqNOrax
-	mov r10, rsp 	; r8 is reserved for argument passing, thus its not used
-	;mov r9, rbp		; r9 is also reserved for argument passing
-	mov rsp, rdx
-	mov rbp, rsp
-	push 0x0		; align
-	push 0x0		; ss
-	push rdx		; rsp
-	push 0x202		; EFLAGS
-	push 0x08		; cs
-	push rcx		; main
-	push 0x0
-	pushaqNOrax
-	;mov rbp, r9
-	mov rax, rsp
-	mov rsp, r10
-	popaqNOrax
 	ret

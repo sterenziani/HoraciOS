@@ -109,7 +109,7 @@ void standard_command_handler(char* s, int background_flag, mailbox_t input, mai
 	if(strcmp(s, PS) == 0)
 	{
 		run("ps", list_all_processes, NULL, NULL, background_flag, 0, input, output);
-		myPrintf("hola");
+		//myPrintf("hola");
 		return;
 	}
 	if(strcmp(s, SCHEDULER_TEST) == 0)

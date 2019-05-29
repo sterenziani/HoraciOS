@@ -16,6 +16,14 @@ typedef struct process_stack {
 	int size;
 } process_stack_t;
 
+typedef struct {
+  char *name;
+  process_type_t type;
+  int priority;
+  mailbox_t input;
+  mailbox_t output;
+} header_t;
+
 #define PROCESS_NAME_LENGTH 256
 
 typedef struct process_context_block {
@@ -40,7 +48,7 @@ typedef process_context_block_t *ProcessContextBlock;
 
 void *get_rsp(ProcessContextBlock process);
 void set_rsp(ProcessContextBlock process, void *rsp);
-int create_process(void **argv, void *entry_point, int *process_id, process_type_t type, char *name, int priority);
+int create_process(void **argv, void *entry_point, header_t* header);
 int doom_process(process_id_t pid);
 int resume_process(process_id_t pid);
 int mark_process_as_blocked(process_id_t pid);

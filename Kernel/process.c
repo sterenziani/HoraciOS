@@ -76,12 +76,9 @@ int get_process_id(ProcessContextBlock process){
 	return process->id;
 }
 
-int create_process(void **argv, void *entry_point, int *process_id, process_type_t type, char *name, int priority){
-	if (name == NULL || !VALID_PRIORITY(priority)){
-		if (process_id != NULL){
-			*process_id = -1;
-		}
-    	return 0;
+int create_process(void **argv, void *entry_point, header_t *header){
+	if (header->name == NULL || !VALID_PRIORITY(header->priority)){
+		return -1;
 	}
 	int ppid = get_current_pid();
 	if(process_pointer == -1){
@@ -96,10 +93,7 @@ int create_process(void **argv, void *entry_point, int *process_id, process_type
 	mutex_lock(process_mutex);
 	if (process_count == MAX_PROCESS_COUNT){
 		mutex_unlock(process_mutex);
-		if (process_id != NULL){
-			*process_id = -1;
-		}
-    	return 0;
+		return -1;
   	}
 	reserved_process_pointer = process_pointer;
 	ready_processes[process_pointer].state = READY;
@@ -112,25 +106,23 @@ int create_process(void **argv, void *entry_point, int *process_id, process_type
   	process_count++;
 	mutex_unlock(process_mutex);
 //// EXIT DANGER ZONE
-	strncpy(ready_processes[reserved_process_pointer].name, name, PROCESS_NAME_LENGTH);
+	strncpy(ready_processes[reserved_process_pointer].name, header->name, PROCESS_NAME_LENGTH);
 
-	if(process_id != NULL)
-		*process_id = reserved_process_pointer;
-	ready_processes[reserved_process_pointer].type = type;
+	ready_processes[reserved_process_pointer].type = header->type;
 	if(ppid == -1){
 		ready_processes[reserved_process_pointer].parent = NULL;
 	} else {
 		ready_processes[reserved_process_pointer].parent = &ready_processes[ppid];
 	}
 	ready_processes[reserved_process_pointer].stack.current = _initialize_stack(argv, count_process_args(argv), ready_processes[reserved_process_pointer].stack.stack_base, (void *) wrapper_process, entry_point, reserved_process_pointer);
-	ready_processes[reserved_process_pointer].priority = priority;
+	ready_processes[reserved_process_pointer].priority = header->priority;
   	enqueue_process(&ready_processes[reserved_process_pointer]);
-	if (type == FOREGROUND && ppid != -1 && scheduled_processes() > 1){
+	if (header->type == FOREGROUND && ppid != -1 && scheduled_processes() > 1){
 		mark_process_as_blocked(ppid);
 	}
-	ready_processes[reserved_process_pointer].input = NULL;
-	ready_processes[reserved_process_pointer].output = NULL;
-  return 1;
+	ready_processes[reserved_process_pointer].input = header->input;
+	ready_processes[reserved_process_pointer].output = header->output;
+  	return reserved_process_pointer;
 }
 
 static int change_process_state(process_id_t pid, process_state_t state){
