@@ -54,6 +54,8 @@ void help() {
 	myPrintf(" *  %s - Tests scheduler by running three processes that only print a letter repeatedly\n\n", SCHEDULER_TEST);
 	myPrintf(" *  %s - Sleeps for 10 seconds. Perfect for ps testing!\n\n", DUMMY);
 	myPrintf(" *  %s [pid] [int] - Changes [pid]'s priority to [int]\n\n", NICE);
+	myPrintf(" *  %s - Reads you a poem\n\n", TELL_POEM);
+	myPrintf(" *  %s - Replaces all consonants with an asterisk\n\n", FILTER_VOWELS);
 	myPutchar('\n');
 }
 
@@ -193,14 +195,17 @@ void pipe_command_handler(char* app, char* target)
 	for (int i = 0; i < number_length; i++)
 		pipe_name[4+i] = pipe_number[i];
 	mailbox_t mailbox = create_mailbox(pipe_name);
-
+	pipe_counter++;
+	/*
 	myPrintf("Input: ");
 	myPrintHex((uint64_t)NULL);
 	myPrintf(" / Output: ");
 	myPrintHex((uint64_t)mailbox);
 	myPrintf(" in Userland\n");
+	*/
 	standard_command_handler(app, 1, NULL, mailbox);
 	standard_command_handler(target, 0, mailbox, NULL);
+	myPrintf("hola");
 	destroy_mailbox(mailbox);
 	return;
 }

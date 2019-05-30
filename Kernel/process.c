@@ -8,6 +8,7 @@
 #include <mutex.h>
 #include <strings.h>
 #include <binary_info.h>
+#include <naiveConsole.h>
 
 #define MAX_PROCESS_ID MAX_PROCESS_COUNT-1
 #define MAX_ARG_COUNT 7
@@ -126,7 +127,7 @@ int create_process(void **argv, void *entry_point, header_t *header){
 	if (header->type == FOREGROUND && ppid != -1 && scheduled_processes() > 1){
 		mark_process_as_blocked(ppid);
 	}
-  	return reserved_process_pointer;
+  return reserved_process_pointer;
 }
 
 static int change_process_state(process_id_t pid, process_state_t state){

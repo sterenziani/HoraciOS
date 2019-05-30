@@ -83,7 +83,7 @@ void myPrintf(char * cadena,...)
 	va_start (ap,cadena);
 	int dim=strlen(cadena);
 	int caso=NORMAL;
-  	int index=0;
+  int index=0;
 	for(int i=0;i<dim;i++){
 		if(caso==NORMAL){
 			if(cadena[i]!= '%')

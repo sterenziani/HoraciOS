@@ -15,18 +15,27 @@ void write_handler(uint64_t fd, char * buffer, int strlen)
 		cadena[i] = buffer[i];
 	cadena[i]= 0;
 	mailbox_t output;
-	if ((output = get_output(get_current_pid())) == NULL){
+	if ((output = get_output(get_current_pid())) == NULL)
+	{
 		switch(fd){
-			case STDOUT:	print(cadena);
+			case STDOUT:
+							print(cadena);
 							break;
-			case STDERR:  	printFormat(cadena, RED_COLOR, BACKGROUND_COLOR);
+			case STDERR:
+							printFormat(cadena, RED_COLOR, BACKGROUND_COLOR);
 							break;
-			case NEWLINE:	newLine();
+			case NEWLINE:
+							newLine();
 							break;
 		}
-	} else {
-		write_message(output, cadena);
-	}	
+	}
+	else
+	{
+		if(fd == 2)
+			write_message(output, "\n");
+		else
+			write_message(output, cadena);
+	}
 }
 
 void big_handler(uint64_t fd, char* buffer, int strlen)

@@ -14,6 +14,8 @@
 #define KILL_PROCESS 13
 #define GET_ALL_PROCESSES 14
 #define BE_NICE 15
+#define RESET_INPUT 16
+#define RESET_OUTPUT 17
 
 #define PRINT_BITMAP 87
 #define SEM_CREATE 88

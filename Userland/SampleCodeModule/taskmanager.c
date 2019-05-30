@@ -84,3 +84,8 @@ void list_all_processes()
     myPrintf("%s\n", ready_processes[i].name);
   }
 }
+
+void reset_io()
+{
+	return;
+}
