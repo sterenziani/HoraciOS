@@ -4,6 +4,7 @@
 #include <strings.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
+#include <mutex.h>
 
 static post_office_t post_office;
 
@@ -112,6 +113,8 @@ int write_message(mailbox_t mailbox, char* msg)
   if(writable_bytes(mailbox) < strlen(msg))
     return ERROR;
 
+  mutex_t mailbox_mutex = mutex_create("OS_mailbox_mutex");
+  mutex_lock(mailbox_mutex);
   // strcpy
   int write_index = mailbox->write_index;
   int length = strlen(msg);
@@ -120,11 +123,11 @@ int write_message(mailbox_t mailbox, char* msg)
     mailbox->buffer[(write_index + i)%MAILBOX_BUFFER_SIZE] = msg[i];
     mailbox->empty_bytes--;
   }
-
   // Update write_index
   mailbox->write_index += length;
   mailbox->write_index = (mailbox->write_index % MAILBOX_BUFFER_SIZE);
   wake_up_processes(mailbox);
+  mutex_unlock(mailbox_mutex);
   return SUCCESS;
 }
 
@@ -143,9 +146,17 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
     return ERROR;
   if(bytes > MAILBOX_BUFFER_SIZE)
     return ERROR;
+
+  mutex_t mailbox_mutex = mutex_create("OS_mailbox_mutex");
+  mutex_lock(mailbox_mutex);
   while(readable_bytes(mailbox) < bytes)
   {
+    //printFormat("Blocking", ORANGE_COLOR, BACKGROUND_COLOR);
+    //newLine();
+    mutex_unlock(mailbox_mutex);
     block_process(mailbox);
+    //printFormat("Woke up", ORANGE_COLOR, BACKGROUND_COLOR);
+    mutex_lock(mailbox_mutex);
   }
   // Let's read
   for (int i = 0; i < bytes; i++)
@@ -158,6 +169,7 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
   // Update read_index
   mailbox->read_index += bytes;
   mailbox->read_index = (mailbox->read_index % MAILBOX_BUFFER_SIZE);
+  mutex_unlock(mailbox_mutex);
   return SUCCESS;
 }
 

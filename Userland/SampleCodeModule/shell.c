@@ -196,16 +196,10 @@ void pipe_command_handler(char* app, char* target)
 		pipe_name[4+i] = pipe_number[i];
 	mailbox_t mailbox = create_mailbox(pipe_name);
 	pipe_counter++;
-	/*
-	myPrintf("Input: ");
-	myPrintHex((uint64_t)NULL);
-	myPrintf(" / Output: ");
-	myPrintHex((uint64_t)mailbox);
-	myPrintf(" in Userland\n");
-	*/
 	standard_command_handler(app, 1, NULL, mailbox);
+	myPrintf("\n");
 	standard_command_handler(target, 0, mailbox, NULL);
-	myPrintf("hola");
+	myPrintf("Hola!\n");
 	destroy_mailbox(mailbox);
 	return;
 }

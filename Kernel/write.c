@@ -2,6 +2,7 @@
 #include <font.h>
 #include <process.h>
 #include <scheduler.h>
+#include <time.h>
 #define BIG_FONT_SIZE 15
 
 enum FD1{STDOUT=0, STDERR, NEWLINE};
@@ -30,7 +31,11 @@ void write_handler(uint64_t fd, char * buffer, int strlen)
 		}
 	}
 	else
-	{
+	{/*
+		printFormat("Hello I write ", GREEN_COLOR, BACKGROUND_COLOR);
+		printFormat(cadena, GREEN_COLOR, BACKGROUND_COLOR);
+		printFormat(" to pipe", GREEN_COLOR, BACKGROUND_COLOR);*/
+		//newLine();
 		if(fd == 2)
 			write_message(output, "\n");
 		else

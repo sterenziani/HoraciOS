@@ -12,6 +12,7 @@ void init_mutex_directory()
   mutex_directory.free_index = 0;
   for(int i = 0; i < MAX_MUTEXES; i++)
     mutex_directory.mutexes[i] = NULL;
+  mutex_create("OS_mailbox_mutex");
 }
 
 int get_mutex_index(char* mutex)
