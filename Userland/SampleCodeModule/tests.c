@@ -25,6 +25,35 @@ void vowel_reader_test()
   myPrintf("Bueno ese fue el video, espero que les haya gustado chauuuu! (Lector finaliza y ahora retorna)\n\n");
 }
 
+void pipe_producer()
+{
+  for (char i = 'A'; i <= 'Z'; i++)
+    myPutchar(i);
+  myPutchar('\n');
+}
+
+void pipe_consumer()
+{
+  int c;
+  while((c=myGetChar()) != '\n')
+  {
+    if(c != 0)
+      myPutchar(c);
+  }
+  myPrintf("\nConsumer finished!\n\n");
+}
+
+void pipe_test()
+{
+  mailbox_t mailbox = create_mailbox("pipe_prodcons_mailbox");
+  run("prod1", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
+  run("prod2", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
+  run("prod3", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
+  run("cons1", pipe_consumer, NULL, NULL, 1, 0, mailbox, NULL);
+  run("cons2", pipe_consumer, NULL, NULL, 0, 0, mailbox, NULL);
+  destroy_mailbox(mailbox);
+}
+
 void tell_poem_test()
 {
   myPrintf("There was an old man from Peru who dreamed he was eating his shoe. When he woke in a fright in the dark of the night he found it was perfectly true\nX");

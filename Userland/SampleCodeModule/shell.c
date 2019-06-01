@@ -26,8 +26,15 @@
 #define NICE "nice"
 #define TELL_POEM "poem"
 #define FILTER_VOWELS "filter_vowels"
+#define PIPE_TEST "pipe_test"
+#define PHILOSOPHERS "philosophers"
 
 int pipe_counter;
+
+void philosophers()
+{
+	myPrintf("Implementame\n");
+}
 
 void invalid_command(char * s) {
 	myPrintf("%s: command not found or lacking arguments\n",s);
@@ -132,6 +139,19 @@ void standard_command_handler(char* s, int background_flag, mailbox_t input, mai
 	if(strcmp(s, FILTER_VOWELS) == 0)
 	{
 		run("filter_vowels", vowel_reader_test, NULL, NULL, background_flag, 0, input, output);
+		return;
+	}
+	if(strcmp(s, PIPE_TEST) == 0)
+	{
+		run("pipe_test", pipe_test, NULL, NULL, background_flag, 0, input, output);
+		return;
+	}
+	if(strcmp(s, PHILOSOPHERS) == 0)
+	{
+		if(background_flag == 1)
+			myPrintf("This process requires user input and can not run on background\n");
+		else
+			philosophers();
 		return;
 	}
 	invalid_command(s);
