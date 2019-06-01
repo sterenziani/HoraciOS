@@ -63,6 +63,8 @@ void help() {
 	myPrintf(" *  %s [pid] [int] - Changes [pid]'s priority to [int]\n\n", NICE);
 	myPrintf(" *  %s - Reads you a poem\n\n", TELL_POEM);
 	myPrintf(" *  %s - Replaces all consonants with an asterisk\n\n", FILTER_VOWELS);
+	myPrintf(" *  %s - Tests pipes through a producer-consumer problem problem\n\n", PIPE_TEST);
+	myPrintf(" *  %s - Runs a simulation of the Philosophers Problem\n\n", PHILOSOPHERS);
 	myPutchar('\n');
 }
 
