@@ -219,6 +219,7 @@ void pipe_command_handler(char* app, char* target)
 	mailbox_t mailbox = create_mailbox(pipe_name);
 	pipe_counter++;
 	standard_command_handler(app, 1, NULL, mailbox);
+	myPrintf("\n");
 	standard_command_handler(target, 0, mailbox, NULL);
 	myPrintf("Hola!\n");
 	destroy_mailbox(mailbox);

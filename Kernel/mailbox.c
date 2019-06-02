@@ -4,7 +4,6 @@
 #include <strings.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
-#include <libasm.h>
 
 static post_office_t post_office;
 
@@ -94,7 +93,6 @@ void block_process(mailbox_t mailbox)
     print("ERROR! Too many processes waiting for mailbox!");
   mailbox->lockedQueue[mailbox->queue_index] = process;
   mailbox->queue_index++;
-  unmask_interruptions();
   mark_process_as_blocked(process);
 }
 
@@ -127,7 +125,6 @@ int write_message(mailbox_t mailbox, char* msg)
   mailbox->write_index += length;
   mailbox->write_index = (mailbox->write_index % MAILBOX_BUFFER_SIZE);
   wake_up_processes(mailbox);
-  //unmask_interruptions();
   return SUCCESS;
 }
 
@@ -147,14 +144,12 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
   if(bytes > MAILBOX_BUFFER_SIZE)
     return ERROR;
 
-  //mask_interruptions();
   while(readable_bytes(mailbox) < bytes)
   {
     //printFormat("Blocking", ORANGE_COLOR, BACKGROUND_COLOR);
     //newLine();
     block_process(mailbox);
     //printFormat("Woke up", ORANGE_COLOR, BACKGROUND_COLOR);
-    mask_interruptions();
   }
   // Let's read
   for (int i = 0; i < bytes; i++)
@@ -167,7 +162,6 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
   // Update read_index
   mailbox->read_index += bytes;
   mailbox->read_index = (mailbox->read_index % MAILBOX_BUFFER_SIZE);
-  //unmask_interruptions();
   return SUCCESS;
 }
 

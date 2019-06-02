@@ -4,7 +4,6 @@
 #include <memoryManager.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
-#include <libasm.h>
 
 static sem_directory_t sem_directory;
 
@@ -86,7 +85,6 @@ void sem_wait(sem_t sem)
       sem->queue_free_index = 0;
     mutex_unlock(sem->mutex);
     mark_process_as_blocked(process);
-    unmask_interruptions();
   }
   else
   {

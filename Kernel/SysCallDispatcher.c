@@ -13,7 +13,6 @@
 #include <sem.h>
 #include <process.h>
 #include <binary_info.h>
-#include <libasm.h>
 
 static void info_handler(int p1, int* p2);
 
@@ -105,7 +104,6 @@ static void info_handler(int p1, int* p2);
 
 int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64_t p4, uint64_t p5)
 {
-	mask_interruptions();
 	switch (id)
 	{
 		case PAINT:
@@ -133,7 +131,6 @@ int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64
 								big_handler(p1, (char*)p2, (int)p3);
 								break;
 		case CREATE_PROCESS:
-								unmask_interruptions();
             		return create_process((void **) p2, (void *) p1, (header_t *) p3);
 		case KILL_PROCESS:
 								mark_process_as_finished((process_id_t) p1);
@@ -193,7 +190,6 @@ int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64
 								*((int*)p4) = read_message((mailbox_t) p1, (int) p2, (char*) p3);
 								break;
 	}
-	unmask_interruptions();
 	return 0xC4F3;
 }
 

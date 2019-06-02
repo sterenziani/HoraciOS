@@ -4,7 +4,6 @@
 #include <memoryManager.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
-#include <libasm.h>
 
 static mutex_directory_t mutex_directory;
 
@@ -98,7 +97,6 @@ void mutex_lock(mutex_t mutex)
     mutex->queue_free_index++;
     if(mutex->queue_free_index == PROCESS_QUEUE_SIZE)
       mutex->queue_free_index = 0;
-    unmask_interruptions();
     mark_process_as_blocked(process);
   }
 }
