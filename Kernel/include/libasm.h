@@ -4,7 +4,8 @@
 #include <process.h>
 
 void *_initialize_stack(void **argv, int argc, void *stack, void *wrapper_process, void *entry_point, process_id_t pid);
-
 void _force_irq00(void);
+void mask_interruptions();
+void unmask_interruptions();
 
 #endif

@@ -4,7 +4,7 @@
 #include <strings.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
-#include <mutex.h>
+#include <libasm.h>
 
 static post_office_t post_office;
 
@@ -94,6 +94,7 @@ void block_process(mailbox_t mailbox)
     print("ERROR! Too many processes waiting for mailbox!");
   mailbox->lockedQueue[mailbox->queue_index] = process;
   mailbox->queue_index++;
+  unmask_interruptions();
   mark_process_as_blocked(process);
 }
 
@@ -113,11 +114,10 @@ int write_message(mailbox_t mailbox, char* msg)
   if(writable_bytes(mailbox) < strlen(msg))
     return ERROR;
 
-  mutex_t mailbox_mutex = mutex_create("OS_mailbox_mutex");
-  mutex_lock(mailbox_mutex);
   // strcpy
   int write_index = mailbox->write_index;
   int length = strlen(msg);
+
   for (int i = 0; i < length; i++)
   {
     mailbox->buffer[(write_index + i)%MAILBOX_BUFFER_SIZE] = msg[i];
@@ -127,7 +127,7 @@ int write_message(mailbox_t mailbox, char* msg)
   mailbox->write_index += length;
   mailbox->write_index = (mailbox->write_index % MAILBOX_BUFFER_SIZE);
   wake_up_processes(mailbox);
-  mutex_unlock(mailbox_mutex);
+  //unmask_interruptions();
   return SUCCESS;
 }
 
@@ -147,16 +147,14 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
   if(bytes > MAILBOX_BUFFER_SIZE)
     return ERROR;
 
-  mutex_t mailbox_mutex = mutex_create("OS_mailbox_mutex");
-  mutex_lock(mailbox_mutex);
+  //mask_interruptions();
   while(readable_bytes(mailbox) < bytes)
   {
     //printFormat("Blocking", ORANGE_COLOR, BACKGROUND_COLOR);
     //newLine();
-    mutex_unlock(mailbox_mutex);
     block_process(mailbox);
     //printFormat("Woke up", ORANGE_COLOR, BACKGROUND_COLOR);
-    mutex_lock(mailbox_mutex);
+    mask_interruptions();
   }
   // Let's read
   for (int i = 0; i < bytes; i++)
@@ -169,7 +167,7 @@ int read_message(mailbox_t mailbox, int bytes, char* dest)
   // Update read_index
   mailbox->read_index += bytes;
   mailbox->read_index = (mailbox->read_index % MAILBOX_BUFFER_SIZE);
-  mutex_unlock(mailbox_mutex);
+  //unmask_interruptions();
   return SUCCESS;
 }
 

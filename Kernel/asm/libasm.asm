@@ -11,6 +11,10 @@ GLOBAL inb
 GLOBAL beepon
 GLOBAL beepoff
 GLOBAL mutex_acquire
+GLOBAL mask_interruptions
+GLOBAL unmask_interruptions
+
+EXTERN picMasterMask
 
 section .bss
 	RestoreSP: resq 1
@@ -114,4 +118,18 @@ mutex_acquire:
 
 	mov rsp, rbp
 	pop rbp
+	ret
+
+mask_interruptions:
+	push rdx
+	mov rdx, 0xFC
+	call picMasterMask
+	pop rdx
+	ret
+
+unmask_interruptions:
+	push rdx
+	mov rdx, 0xFE
+	call picMasterMask
+	pop rdx
 	ret

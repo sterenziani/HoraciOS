@@ -4,6 +4,7 @@
 #include <memoryManager.h>
 #include <naiveConsole.h>
 #include <scheduler.h>
+#include <libasm.h>
 
 static mutex_directory_t mutex_directory;
 
@@ -12,7 +13,6 @@ void init_mutex_directory()
   mutex_directory.free_index = 0;
   for(int i = 0; i < MAX_MUTEXES; i++)
     mutex_directory.mutexes[i] = NULL;
-  mutex_create("OS_mailbox_mutex");
 }
 
 int get_mutex_index(char* mutex)
@@ -98,6 +98,7 @@ void mutex_lock(mutex_t mutex)
     mutex->queue_free_index++;
     if(mutex->queue_free_index == PROCESS_QUEUE_SIZE)
       mutex->queue_free_index = 0;
+    unmask_interruptions();
     mark_process_as_blocked(process);
   }
 }
