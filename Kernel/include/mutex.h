@@ -3,7 +3,7 @@
 #include <lib.h>
 #include <process.h>
 
-#define MAX_MUTEXES 10
+#define MAX_MUTEXES 50
 
 typedef struct{
   char name[NAME_LENGTH + 1];

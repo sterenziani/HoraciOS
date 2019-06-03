@@ -118,10 +118,8 @@ int amount_of_blocks_needed(uint64_t bytes)
   return multiple;
 }
 
-/// AYUDA!!!!!!!!
 uint64_t calculateOffset(int pagesIndex, uint32_t order)
 {
-	// DE DONDE SALE EL CALCULO???????????????
   uint64_t skippedPages = (pagesIndex + 1 - (1 << order)) << (memoryManager.maxOrder - order);
   return skippedPages * BLOCK_SIZE;
 }
@@ -359,4 +357,3 @@ pagesSkippedAtBranch = 0
 			0	0		0	0		0	X		0	0		0	0		0	0		0	0		0	0
 
 */
-

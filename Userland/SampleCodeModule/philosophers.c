@@ -32,7 +32,7 @@ void prepareTable(){
 	int philosophers_to_remove = 0;
 
 	for (int i = 0; i < MAX_PHILOSOPHERS; ++i) {
- 		chopsticks[i] = mutex_create(chopsticks_names[i]);	
+ 		chopsticks[i] = mutex_create(chopsticks_names[i]);
  	}
 
  	main_mutex = mutex_create("main_mutex");
@@ -78,7 +78,7 @@ void prepareTable(){
 	destroyAll();
 	mutex_destroy(main_mutex);
 	for (int i = 0; i < MAX_PHILOSOPHERS; ++i) {
- 		mutex_destroy(chopsticks_names[i]);	
+ 		mutex_destroy(chopsticks_names[i]);
  	}
 
 }
@@ -94,14 +94,14 @@ void printInstructions() {
 
 
 void * philosopher(void** argsp) {
-	
+
 	int philosopher_number = philosophers_assigned;
 
 	mutex_t main_mutex = argsp[0];
 
     int right = ((philosopher_number) % philosophers_quantity);
 	int left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
-	
+
 	mutex_t * chopsticks;
 	chopsticks = argsp[1];
 
@@ -119,26 +119,26 @@ void * philosopher(void** argsp) {
 		if (philosopher_number % 2) {
 			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
-			mutex_lock(&chopsticks[right]);
+			mutex_lock(chopsticks[right]);
 			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
 
 			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
-			mutex_lock(&chopsticks[left]);
+			mutex_lock(chopsticks[left]);
 			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 		}
 		else {
 			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
-			mutex_lock(&chopsticks[left]);
+			mutex_lock(chopsticks[left]);
 			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 
 			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
-			mutex_lock(&chopsticks[right]);
+			mutex_lock(chopsticks[right]);
 			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
 		}	myPrintf("%d\n",right);
 
@@ -204,7 +204,7 @@ void removePhilosopher() {
 
 void destroyAll() {
  	mutex_lock(main_mutex);
-	
+
 	for (int i = 0; i < philosophers_quantity; i++) {
 		kill(philosophers[i]);
 	}
