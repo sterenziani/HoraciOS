@@ -47,7 +47,7 @@ void prepareTable(){
 			case INC_PHILO:
 			if(flag_of_first == 1){
 				flag_of_first = 0;
-				myPrintf("Un filosofo solo no puede debatir, contrate a otro para que puedan comenzar");
+				myPrintf("    Un filosofo solo no puede debatir, contrate a otro para que puedan comenzar!\n");
 				break;
 			}
 			if(flag_of_second == 1){
@@ -55,9 +55,7 @@ void prepareTable(){
 				hirePhilosopher();
 				sleep(1);
 				mutex_lock(main_mutex);
-				myPrintf("Made first one. Quantity is %d\n", philosophers_quantity);
 				philosophers_quantity--;
-				myPrintf("Decreased. Now quantity is %d\n", philosophers_quantity);
 				mutex_unlock(main_mutex);
 				hirePhilosopher();
 				break;
@@ -97,7 +95,7 @@ void * philosopher(void** argsp) {
 	mutex_t * chopsticks;
 	chopsticks = argsp[1];
 
-	myPrintf("\n===Ha llegado el filosofo %d\n", philosopher_number);
+	myPrintf("    Ha llegado el filosofo %d\n", philosopher_number);
 	while (1){
 		myPrintf("Philosopher %d - ", philosopher_number);
 		myPrintf("L = %d.", right);
@@ -109,37 +107,37 @@ void * philosopher(void** argsp) {
 		mutex_unlock(main_mutex);
 
 		if (philosopher_number % 2) {
-			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
 			mutex_lock(chopsticks[right]);
-			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
 
-			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 			mutex_lock(chopsticks[left]);
-			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 		}
 		else {
-			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 			mutex_lock(chopsticks[left]);
-			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d pudo tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",left);
 
-			myPrintf("\nEl filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d esta esperando para tomar el cubierto ", philosopher_number);
 			myPrintf("%d\n",right);
 			mutex_lock(chopsticks[right]);
-			myPrintf("\nEl filosofo %d pudo tomar el cubierto ", philosopher_number);
+			myPrintf("El filosofo %d pudo tomar el cubierto ", philosopher_number);
 		}	myPrintf("%d\n",right);
 
-		myPrintf("\nEl filosofo %d esta comiendo en la mesa\n", philosopher_number);
+		myPrintf("El filosofo %d esta comiendo en la mesa\n", philosopher_number);
 
 		mutex_lock(main_mutex);
-		mutex_unlock(&chopsticks[right]);
-		mutex_unlock(&chopsticks[left]);
-		myPrintf("\nEl filosofo %d termino de comer\n", philosopher_number);
+		myPrintf("El filosofo %d termino de comer\n", philosopher_number);
+		mutex_unlock(chopsticks[right]);
+		mutex_unlock(chopsticks[left]);
 		right = ((philosopher_number) % philosophers_quantity);
 		left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
 		mutex_unlock(main_mutex);
@@ -148,19 +146,17 @@ void * philosopher(void** argsp) {
 }
 
 
-
 void hirePhilosopher() {
  	mutex_lock(main_mutex);
 
 	if(philosophers_quantity >= MAX_PHILOSOPHERS) {
-		myPrintf("No hay filosofos disponibles para contratar\n\n");
+		myPrintf("    No hay filosofos disponibles para contratar\n");
 		mutex_unlock(main_mutex);
 		return;
 	}
 
 	int pid = 0;
 	philosophers_quantity++;
-	myPrintf("Hired. Now quantity is %d\n", philosophers_quantity);
 	philosophers_assigned++;
 	run("philosopher", &philosopher, argsp, &pid, 1, 0, NULL, NULL);
 	philosophers[philosophers_assigned - 1] = pid;
@@ -172,7 +168,7 @@ void letGoPhilosopher() {
 	mutex_lock(main_mutex);
 
  	if(philosophers_quantity <= 2) {
-		myPrintf("Necesitas al menos dos filosofos en tu casa\n\n");
+		myPrintf("    Necesitas al menos dos filosofos en tu casa\n!");
 		mutex_unlock(main_mutex);
 		return;
 	}
@@ -189,7 +185,7 @@ void removePhilosopher() {
 
   mutex_unlock(main_mutex);
 
-  myPrintf("El filosofo %d fue despedido\n\n", philosophers_quantity);
+  myPrintf("    El filosofo %d fue despedido\n", philosophers_quantity+1);
   kill(fired_philospher);
 }
 
