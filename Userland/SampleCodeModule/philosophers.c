@@ -25,11 +25,9 @@ char* chopsticks_names[15] = {"chop1","chop2","chop3","chop4","chop5","chop6","c
 void prepareTable(){
 	printInstructions();
 
-	int philosophers_quantity = 0;
-
-	int philosophers_assigned = 0;
-
-	int philosophers_to_remove = 0;
+	philosophers_quantity = 1;
+	philosophers_assigned = 0;
+	philosophers_to_remove = 0;
 
 	for (int i = 0; i < MAX_PHILOSOPHERS; ++i) {
  		chopsticks[i] = mutex_create(chopsticks_names[i]);
@@ -38,9 +36,7 @@ void prepareTable(){
  	main_mutex = mutex_create("main_mutex");
 
  	int flag_of_first = 1;
-
  	int flag_of_second = 1;
-
 
  	argsp[0] = main_mutex;
  	argsp[1] = chopsticks;
@@ -59,7 +55,9 @@ void prepareTable(){
 				hirePhilosopher();
 				sleep(1);
 				mutex_lock(main_mutex);
+				myPrintf("Made first one. Quantity is %d\n", philosophers_quantity);
 				philosophers_quantity--;
+				myPrintf("Decreased. Now quantity is %d\n", philosophers_quantity);
 				mutex_unlock(main_mutex);
 				hirePhilosopher();
 				break;
@@ -80,40 +78,34 @@ void prepareTable(){
 	for (int i = 0; i < MAX_PHILOSOPHERS; ++i) {
  		mutex_destroy(chopsticks_names[i]);
  	}
-
 }
-
 
 void printInstructions() {
  	myPrintf("\nTodavia no contrato a un filosofo\n");
 	myPrintf("Presione:\n");
-  	myPrintf("    %c para agregar a un filosofo\n", INC_PHILO);
+  myPrintf("    %c para agregar a un filosofo\n", INC_PHILO);
 	myPrintf("    %c para eliminar a un filosofo\n", DEC_PHILO);
-	myPrintf("    %c para terminar la simulacion\n\n\n", QUIT);
+	myPrintf("    %c para terminar la simulacion\n\n", QUIT);
 }
 
-
 void * philosopher(void** argsp) {
-
 	int philosopher_number = philosophers_assigned;
-
 	mutex_t main_mutex = argsp[0];
-
-    int right = ((philosopher_number) % philosophers_quantity);
+  int right = ((philosopher_number) % philosophers_quantity);
 	int left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
 
 	mutex_t * chopsticks;
 	chopsticks = argsp[1];
 
-	myPrintf("\n\nHola, soy el filosofo %d \n\n", philosopher_number);
-	while (1) {
+	myPrintf("\n===Ha llegado el filosofo %d\n", philosopher_number);
+	while (1){
+		myPrintf("Philosopher %d - ", philosopher_number);
+		myPrintf("L = %d.", right);
+		myPrintf(" R = %d\n", left);
 
-		myPrintf("esta es mi derecha %d\n",right);
-		myPrintf("esta es mi izquierda %d\n",left);
 		mutex_lock(main_mutex);
-    	if (philosophers_to_remove > 0)
-      		removePhilosopher();
-
+  	if (philosophers_to_remove > 0)
+    		removePhilosopher();
 		mutex_unlock(main_mutex);
 
 		if (philosopher_number % 2) {
@@ -168,7 +160,7 @@ void hirePhilosopher() {
 
 	int pid = 0;
 	philosophers_quantity++;
-	myPrintf("\n cantidad %d\n", philosophers_quantity);
+	myPrintf("Hired. Now quantity is %d\n", philosophers_quantity);
 	philosophers_assigned++;
 	run("philosopher", &philosopher, argsp, &pid, 1, 0, NULL, NULL);
 	philosophers[philosophers_assigned - 1] = pid;

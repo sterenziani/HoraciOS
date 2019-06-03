@@ -44,7 +44,6 @@ mutex_t mutex_create(char* name)
   for (int i = 0; i < length; i++)
     m->name[i] = name[i];
   m->name[length] = 0;
-  newLine();
 
   m->value = 0;                                     // El mutex se inicializa en 0
   m->owner = -1;                                    // Aun no tiene dueño, asi que el PID del dueño es -1
