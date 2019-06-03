@@ -127,11 +127,6 @@ void * philosopher(void** argsp) {
 		}
 		right = ((philosopher_number) % philosophers_quantity);
 		left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
-		myPrintf("Philosopher %d - ", philosopher_number);
-		myPrintf("L = %d   ", left);
-		myPrintf(" R = %d", right);
-		myPrintf("  Quantity = %d", philosophers_quantity);
-		myPrintf("  Assigned = %d\n", philosophers_assigned);
 		mutex_unlock(main_mutex);
 
 		if (philosopher_number % 2) {
