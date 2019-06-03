@@ -26,8 +26,10 @@ int get_mutex_index(char* mutex)
 
 void release_mutex_by_owner(process_id_t pid) {
   for(int i = 0; i < MAX_MUTEXES; i++)
-    if(mutex_directory.mutexes[i]->owner == pid)
-      mutex_unlock(mutex_directory.mutexes[i]);
+  {
+    if(mutex_directory.mutexes[i] != NULL && mutex_directory.mutexes[i]->owner == pid)
+      mutex_super_unlock(mutex_directory.mutexes[i]);
+  }
 }
 
 mutex_t mutex_create(char* name)
@@ -115,6 +117,27 @@ void mutex_lock_by_name(char* name)
     return;
   mutex_t mutex = mutex_directory.mutexes[index];
   mutex_lock(mutex);
+}
+
+// Esto unlockea sin importar el dueño
+void mutex_super_unlock(mutex_t mutex)
+{
+  if(mutex == NULL)
+    return;
+  // Saco al primero de la cola, lo despierto y lo hago dueño
+  if(mutex->lockedQueue[mutex->queue_start_index] != -1)
+  {
+    process_id_t process = mutex->lockedQueue[mutex->queue_start_index];
+    mutex->lockedQueue[mutex->queue_start_index] = -1;
+    mutex->queue_start_index++;
+    if(mutex->queue_start_index == PROCESS_QUEUE_SIZE)
+      mutex->queue_start_index = 0;
+    mutex->owner = process;
+    resume_process(process);
+    return;
+  }
+  mutex->owner = -1;
+  mutex->value = 0;
 }
 
 void mutex_unlock(mutex_t mutex)

@@ -78,7 +78,7 @@ void prepareTable(){
 				break;
 			case SECRET:
 				secretCommand();
-				break; 
+				break;
 		}
 	}
 
@@ -98,7 +98,7 @@ void printInstructions() {
 }
 
 
-/* 
+/*
 El filosofo calcula a que cubiertos (mutexes) debe tomar a su izquierda y derecha.
 Los filosofos de philosopher_number par empiezan por la derecha
 Los impares empiezan por la izquierda. De esta forma se evita de que dos filosofos
@@ -108,23 +108,30 @@ que comparten, creando un deadlock
 
 
 void * philosopher(void** argsp) {
+	mutex_lock(main_mutex);
 	int philosopher_number = philosophers_assigned;
 	mutex_t main_mutex = argsp[0];
   int right = ((philosopher_number) % philosophers_quantity);
 	int left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
+	mutex_unlock(main_mutex);
 
 	mutex_t * chopsticks;
 	chopsticks = argsp[1];
 
 	myPrintf("    Ha llegado el filosofo %d\n", philosopher_number);
 	while (1){
-		myPrintf("Philosopher %d - ", philosopher_number);
-		myPrintf("L = %d.", right);
-		myPrintf(" R = %d\n", left);
-
 		mutex_lock(main_mutex);
-  	if (philosophers_to_remove > 0)
-    		removePhilosopher();
+		if (philosophers_to_remove > 0)
+		{
+				removePhilosopher();
+		}
+		right = ((philosopher_number) % philosophers_quantity);
+		left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
+		myPrintf("Philosopher %d - ", philosopher_number);
+		myPrintf("L = %d   ", left);
+		myPrintf(" R = %d", right);
+		myPrintf("  Quantity = %d", philosophers_quantity);
+		myPrintf("  Assigned = %d\n", philosophers_assigned);
 		mutex_unlock(main_mutex);
 
 		if (philosopher_number % 2) {
@@ -151,7 +158,8 @@ void * philosopher(void** argsp) {
 			myPrintf("%d\n",right);
 			mutex_lock(chopsticks[right]);
 			myPrintf("El filosofo %d pudo tomar el cubierto ", philosopher_number);
-		}	myPrintf("%d\n",right);
+			myPrintf("%d\n",right);
+		}
 
 		myPrintf("El filosofo %d esta comiendo en la mesa\n", philosopher_number);
 
@@ -159,8 +167,6 @@ void * philosopher(void** argsp) {
 		myPrintf("El filosofo %d termino de comer\n", philosopher_number);
 		mutex_unlock(chopsticks[right]);
 		mutex_unlock(chopsticks[left]);
-		right = ((philosopher_number) % philosophers_quantity);
-		left = ((philosophers_quantity + philosopher_number) - 1) % philosophers_quantity;
 		mutex_unlock(main_mutex);
 		}
 	return 0;
@@ -202,10 +208,11 @@ void letGoPhilosopher() {
 void removePhilosopher() {
   philosophers_quantity--;
   philosophers_to_remove--;
+	philosophers_assigned--;
   process_id_t fired_philospher = philosophers[philosophers_quantity];
-
-  myPrintf("    El filosofo %d fue despedido\n", philosophers_quantity+1);
+  myPrintf("    El filosofo %d se fue\n", philosophers_quantity+1);
   kill(fired_philospher);
+	mutex_unlock(main_mutex);
 }
 
 
