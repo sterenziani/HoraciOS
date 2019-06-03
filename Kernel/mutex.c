@@ -91,8 +91,11 @@ void mutex_lock(mutex_t mutex)
   {
     // Si el mutex ya estaba en 1, me meto en la cola y le pido al Scheduler que me bloquee
     process_id_t process = get_current_pid();
-    if(mutex->lockedQueue[mutex->queue_free_index] != -1)
+    if(mutex->lockedQueue[mutex->queue_free_index] != -1){
       print("ERROR! Too many processes waiting for mutex!");
+      print(mutex->name);
+      newLine();
+    }
     mutex->lockedQueue[mutex->queue_free_index] = process;
     mutex->queue_free_index++;
     if(mutex->queue_free_index == PROCESS_QUEUE_SIZE)

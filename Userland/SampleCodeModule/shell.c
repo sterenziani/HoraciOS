@@ -6,6 +6,7 @@
 #include <tests.h>
 #include <taskmanager.h>
 #include <prodcons_sem.h>
+#include <philosophers.h>
 
 #define BACKSPACE 14
 #define BUFFER_SIZE 255
@@ -31,10 +32,6 @@
 
 int pipe_counter;
 
-void philosophers()
-{
-	myPrintf("Implementame\n");
-}
 
 void invalid_command(char * s) {
 	myPrintf("%s: command not found or lacking arguments\n",s);
@@ -153,7 +150,7 @@ void standard_command_handler(char* s, int background_flag, mailbox_t input, mai
 		if(background_flag == 1)
 			myPrintf("This process requires user input and can not run on background\n");
 		else
-			philosophers();
+			prepareTable();
 		return;
 	}
 	invalid_command(s);
