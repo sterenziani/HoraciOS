@@ -29,5 +29,6 @@ void mutex_lock_by_name(char* name);
 void mutex_unlock_by_name(char* name);
 void mutex_destroy(mutex_t mutex);
 void mutex_destroy_by_name(char* name);
+void release_mutex_by_owner(process_id_t pid);
 
 #endif

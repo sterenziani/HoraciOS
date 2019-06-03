@@ -24,6 +24,12 @@ int get_mutex_index(char* mutex)
   return -1;
 }
 
+void release_mutex_by_owner(process_id_t pid) {
+  for(int i = 0; i < MAX_MUTEXES; i++)
+    if(mutex_directory.mutexes[i]->owner == pid)
+      mutex_unlock(mutex_directory.mutexes[i]);
+}
+
 mutex_t mutex_create(char* name)
 {
   // Check if already exists

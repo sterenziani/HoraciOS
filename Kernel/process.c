@@ -143,6 +143,9 @@ int mark_process_as_finished(process_id_t pid){
     //DANGER ZONE process_count START
 	mutex_t process_mutex = mutex_create("process_mutex");
     mutex_lock(process_mutex);
+
+    release_mutex_by_owner(pid);
+
 	ready_processes[pid].stack.current = ready_processes[pid].stack.stack_base;
     change_process_state(pid, FINISHED);
   	process_count--;

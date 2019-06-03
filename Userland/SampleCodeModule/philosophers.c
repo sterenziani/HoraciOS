@@ -4,23 +4,31 @@
 #include <philosophers.h>
 #include <time.h>
 
-#define INC_PHILO 'w'
-#define DEC_PHILO 's'
-#define QUIT 'q'
-#define MAX_PHILOSOPHERS 15
-
-
 process_id_t philosophers[MAX_PHILOSOPHERS] = {0};
 mutex_t chopsticks[MAX_PHILOSOPHERS];
+
 int philosophers_quantity = 1;
 int philosophers_assigned = 0;
 int philosophers_to_remove = 0;
+
 int flag_of_first = 1;
 int flag_of_second = 1;
+
 mutex_t main_mutex;
+
 void* argsp[2];
-char* chopsticks_names[15] = {"chop1","chop2","chop3","chop4","chop5","chop6","chop7","chop8",
-"chop9","chop10","chop11","chop12","chop13","chop14","chop15"};
+
+char* chopsticks_names[10] = {"chop1","chop2","chop3","chop4","chop5","chop6","chop7","chop8",
+"chop9","chop10"};
+
+int secret_number = 0;
+
+
+/*Dado que no se puede comenzar el problema de los filosofos con un solo filosofo
+se utilizan flags para esperar hasta que el usuario llame al segundo filosofo
+para poder crear los dos procesos. El filosofo 1 se crea pensando que la
+cantidad total es 2, para que actue correctamente.
+*/
 
 void prepareTable(){
 	printInstructions();
@@ -68,6 +76,9 @@ void prepareTable(){
 				break;
 			default:
 				break;
+			case SECRET:
+				secretCommand();
+				break; 
 		}
 	}
 
@@ -85,6 +96,16 @@ void printInstructions() {
 	myPrintf("    %c para eliminar a un filosofo\n", DEC_PHILO);
 	myPrintf("    %c para terminar la simulacion\n\n", QUIT);
 }
+
+
+/* 
+El filosofo calcula a que cubiertos (mutexes) debe tomar a su izquierda y derecha.
+Los filosofos de philosopher_number par empiezan por la derecha
+Los impares empiezan por la izquierda. De esta forma se evita de que dos filosofos
+uno al lado del otro tomen un cubierto y luego peleen por el cubierto
+que comparten, creando un deadlock
+*/
+
 
 void * philosopher(void** argsp) {
 	int philosopher_number = philosophers_assigned;
@@ -183,8 +204,6 @@ void removePhilosopher() {
   philosophers_to_remove--;
   process_id_t fired_philospher = philosophers[philosophers_quantity];
 
-  mutex_unlock(main_mutex);
-
   myPrintf("    El filosofo %d fue despedido\n", philosophers_quantity+1);
   kill(fired_philospher);
 }
@@ -198,4 +217,23 @@ void destroyAll() {
 	}
 
  	mutex_unlock(main_mutex);
+}
+
+
+void secretCommand(){
+	char* secrets[10] = {"\nYo solo se que no se nada\n",
+	"\nNo es lo que te ocurre, si no como reaccionas lo que importa\n",
+	"\nNuestra envidia siempre dura mas que la felicidad de quien envidiamos\n",
+	"\nHace falta una vida para aprender a vivir\n",
+	"\nLos grandes resultados requieren grandes ambiciones\n",
+	"\nCuanto mas conozco a la gente, mas quiero a mi perro\n",
+	"\nEl hombre es la medida de todas las cosas\n",
+	"\nLas raices de la educacion son amargas, pero sus frutos son dulces\n",
+	"\nSomos mas sinceros cuando estamos iracundos que cuando estamos tranquilos\n",
+	"\nEl insulto deshonra a quien lo infiere, no a quien lo recibe\n"};
+	myPrintf(secrets[secret_number]);
+	secret_number++;
+	if(secret_number>9){
+		secret_number = 0;
+	}
 }
