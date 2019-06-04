@@ -22,7 +22,6 @@ void vowel_reader_test()
       myPutchar('*');
   }
   myPutchar('\n');
-  myPrintf("Bueno ese fue el video, espero que les haya gustado chauuuu! (Lector finaliza y ahora retorna)\n\n");
 }
 
 void breakpoint(){}

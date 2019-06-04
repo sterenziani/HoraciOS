@@ -182,8 +182,6 @@ int is_output_command(char* command)
 
 int is_input_command(char* command)
 {
-	if(strcmp(command, PRODCONS_SEM) == 0)
-		return 1;
 	if(strcmp(command, DIGITAL_CLOCK_COMMAND) == 0)
 		return 1;
 	if(strcmp(command, FILTER_VOWELS) == 0)
@@ -200,7 +198,7 @@ void pipe_command_handler(char* app, char* target)
 	}
 	if(!is_input_command(target))
 	{
-		myPrintf("Left process is not allowed for use with pipes. Please replace it with a command that only outputs to the screen in shell");
+		myPrintf("Right process is not allowed for use with pipes. Please replace it with a command that only outputs to the screen in shell");
 		return;
 	}
 	int number_length = 20;
@@ -218,7 +216,6 @@ void pipe_command_handler(char* app, char* target)
 	standard_command_handler(app, 1, NULL, mailbox);
 	myPrintf("\n");
 	standard_command_handler(target, 0, mailbox, NULL);
-	myPrintf("Hola!\n");
 	destroy_mailbox(mailbox);
 	return;
 }
