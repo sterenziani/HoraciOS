@@ -42,7 +42,7 @@ void pipe_consumer()
     if(c != 0)
       myPutchar(c);
   }
-  myPrintf("\nConsumer finished!\n\n");
+  myPrintf("Consumer finished!\n\n");
   breakpoint();
 }
 
