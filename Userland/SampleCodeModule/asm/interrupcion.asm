@@ -1,4 +1,7 @@
 GLOBAL SysCallDispatcher
+GLOBAL _preserveStack
+GLOBAL _reloadStack
+
 section .text
 
 SysCallDispatcher:

@@ -11,6 +11,8 @@ void read_buffer_handler(char* dest)
 	{
 		*dest = getFirstInBuffer();
 	} else {
-		read_message(input, 1, dest);
+		char buff[2];
+		read_message(input, 1, buff);
+		dest[0] = buff[0];
 	}
 }
