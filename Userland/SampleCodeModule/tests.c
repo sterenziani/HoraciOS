@@ -25,6 +25,8 @@ void vowel_reader_test()
   myPrintf("Bueno ese fue el video, espero que les haya gustado chauuuu! (Lector finaliza y ahora retorna)\n\n");
 }
 
+void breakpoint(){}
+
 void pipe_producer()
 {
   for (char i = 'A'; i <= 'Z'; i++)
@@ -41,16 +43,21 @@ void pipe_consumer()
       myPutchar(c);
   }
   myPrintf("\nConsumer finished!\n\n");
+  breakpoint();
 }
 
 void pipe_test()
 {
   mailbox_t mailbox = create_mailbox("pipe_prodcons_mailbox");
+  mutex_t pipe_mutex = mutex_create("pipe_mutex");
+  mutex_lock(pipe_mutex);
   run("prod1", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
   run("prod2", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
   run("prod3", pipe_producer, NULL, NULL, 1, 0, NULL, mailbox);
   run("cons1", pipe_consumer, NULL, NULL, 1, 0, mailbox, NULL);
-  run("cons2", pipe_consumer, NULL, NULL, 0, 0, mailbox, NULL);
+  run("cons2", pipe_consumer, NULL, NULL, 1, 0, mailbox, NULL);
+  mutex_unlock(pipe_mutex);
+  mutex_destroy(pipe_mutex);
   destroy_mailbox(mailbox);
 }
 

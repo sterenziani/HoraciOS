@@ -131,7 +131,7 @@ int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64
 								big_handler(p1, (char*)p2, (int)p3);
 								break;
 		case CREATE_PROCESS:
-            		return create_process((void **) p2, (void *) p1, (header_t *) p3);
+            					return create_process((void **) p2, (void *) p1, (header_t *) p3);
 		case KILL_PROCESS:
 								mark_process_as_finished((process_id_t) p1);
 								break;
@@ -190,7 +190,7 @@ int SysCallDispatcher(uint64_t id, uint64_t p1, uint64_t p2, uint64_t p3, uint64
 								*((int*)p4) = read_message((mailbox_t) p1, (int) p2, (char*) p3);
 								break;
 	}
-	return 0xC4F3;
+	return 5;
 }
 
 static void info_handler(int p1, int* p2)

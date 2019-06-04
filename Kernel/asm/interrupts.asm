@@ -43,8 +43,7 @@ EXTERN short_term_scheduling
 
 SECTION .text
 
-
-%macro pushaqNOrax 0
+%macro pushaqStack 0
     push rbx
     push r9
     push rsi
@@ -59,6 +58,23 @@ SECTION .text
     push r13
     push r14
     push r15
+%endmacro
+
+%macro pushaqNOrax 0
+    push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
 %endmacro
 
 %macro popaqNOrax 0
@@ -83,7 +99,7 @@ _initialize_stack:
 	mov r10, rsp 	; r8 is reserved for argument passing, thus its not used
 	;mov r9, rbp		; r9 is also reserved for argument passing
 	mov rsp, rdx
-	mov rbp, rsp
+	;mov rbp, rsp
 	push 0x0		; align
 	push 0x0		; ss
 	push rdx		; rsp
@@ -91,7 +107,7 @@ _initialize_stack:
 	push 0x08		; cs
 	push rcx		; main
 	push 0x0
-	pushaqNOrax
+	pushaqStack
 	;mov rbp, r9
 	mov rax, rsp
 	mov rsp, r10
@@ -196,15 +212,17 @@ picMasterMask:
     mov rbp, rsp
     mov ax, di
     out	21h,al
+    mov rsp, rbp
     pop rbp
     retn
 
 picSlaveMask:
-		push    rbp
-    mov   rbp, rsp
-    mov   ax, di  ; ax = mascara de 16 bits
-    out	 	0A1h,al
-    pop   rbp
+	push rbp
+    mov rbp, rsp
+    mov ax, di  ; ax = mascara de 16 bits
+    out	0A1h,al
+    mov	rsp, rbp
+    pop rbp
     retn
 
 ;int 80 (RAX = ID, RBX = p1, RCX = p2, RDX = p3)

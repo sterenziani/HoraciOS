@@ -12,3 +12,6 @@
 
 #Bash History
 .bash_history
+
+#GDB history
+.gdb_history
